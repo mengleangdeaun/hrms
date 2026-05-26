@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\Auth;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use App\Models\HR\Branch;
 
@@ -16,7 +19,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPasswordContract
 {
-    use HasApiTokens, HasFactory, Notifiable, CanResetPassword, \App\Traits\LogsSystemActivity, HasPushSubscriptions;
+    use HasUlids, BelongsToCompany, HasApiTokens, HasFactory, Notifiable, CanResetPassword, \App\Traits\LogsSystemActivity, HasPushSubscriptions;
 
     /**
      * Send the password reset notification.

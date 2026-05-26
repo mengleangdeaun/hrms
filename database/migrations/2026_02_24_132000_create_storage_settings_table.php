@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('storage_settings', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('provider')->unique(); // 'local', 's3', 'gdrive'
             $table->boolean('is_active')->default(false);
             $table->text('credentials')->nullable();

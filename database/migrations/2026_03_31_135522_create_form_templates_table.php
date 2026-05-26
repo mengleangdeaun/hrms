@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('form_templates', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('form_document_type_id')->constrained('form_document_types')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('form_document_type_id')->constrained('form_document_types')->onDelete('cascade');
             $table->string('name');
             $table->boolean('is_system')->default(false);
             $table->boolean('is_active_for_print')->default(false);

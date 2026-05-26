@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('app_feedbacks', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('employee_id')->nullable();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->nullable();
             $table->text('message');
             $table->json('device_info')->nullable();
             $table->string('status')->default('pending');

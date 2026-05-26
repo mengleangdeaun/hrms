@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('holidays', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name');
             $table->enum('category', ['National Holidays', 'Religious', 'Company Specific', 'Regional Events']);
             $table->date('start_date');
@@ -24,9 +25,10 @@ return new class extends Migration
         });
 
         Schema::create('holiday_branch', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('holiday_id')->constrained()->onDelete('cascade');
-            $table->foreignId('branch_id')->constrained()->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('holiday_id')->constrained()->onDelete('cascade');
+            $table->ulid('branch_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

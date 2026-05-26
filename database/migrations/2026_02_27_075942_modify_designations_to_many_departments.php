@@ -13,9 +13,10 @@ return new class extends Migration
     {
         // 1. Create the new Pivot Table
         Schema::create('department_designation', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('department_id')->constrained()->onDelete('cascade');
-            $table->foreignId('designation_id')->constrained('designations')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('department_id')->constrained()->onDelete('cascade');
+            $table->ulid('designation_id')->constrained('designations')->onDelete('cascade');
             $table->timestamps();
             
             // Ensure unique pairs
@@ -35,11 +36,6 @@ return new class extends Migration
 
         // 3. Drop the old column
         Schema::table('designations', function (Blueprint $table) {
-            // First drop foreign key if it exists, ignoring errors if it doesn't
-            try {
-                $table->dropForeign(['department_id']);
-            } catch (\Exception $e) {}
-            
             $table->dropColumn('department_id');
         });
     }
@@ -51,7 +47,7 @@ return new class extends Migration
     {
         // 1. Add back the old column
         Schema::table('designations', function (Blueprint $table) {
-            $table->foreignId('department_id')->nullable()->constrained()->onDelete('cascade');
+            $table->ulid('department_id')->nullable()->constrained()->onDelete('cascade');
         });
 
         // 2. Attempt to restore data (takes the first pivot entry per designation)

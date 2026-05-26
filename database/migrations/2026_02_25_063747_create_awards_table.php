@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('awards', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('award_type_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->cascadeOnDelete();
+            $table->ulid('award_type_id')->constrained()->cascadeOnDelete();
             $table->date('date');
             $table->string('gift')->nullable();
             $table->text('description')->nullable();

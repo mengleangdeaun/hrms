@@ -9,12 +9,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employee_day_offs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->json('days_off'); // e.g. ["Sunday"] or ["Saturday","Sunday"]
             $table->date('effective_from');
             $table->date('effective_to')->nullable(); // null = permanent/ongoing
-            $table->foreignId('assigned_by')->nullable()->constrained('employees')->nullOnDelete();
+            $table->ulid('assigned_by')->nullable()->constrained('employees')->nullOnDelete();
             $table->text('notes')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_policies', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->foreignId('leave_type_id')->constrained('leave_types')->onDelete('cascade');
+            $table->ulid('leave_type_id')->constrained('leave_types')->onDelete('cascade');
             $table->enum('accrual_type', ['fixed', 'monthly', 'yearly'])->default('fixed');
             $table->decimal('accrual_rate', 8, 2)->default(0);
             $table->integer('carry_forward_limit')->default(0);

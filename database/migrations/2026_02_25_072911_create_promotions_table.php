@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('promotions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('previous_designation_id')->constrained('designations')->cascadeOnDelete();
-            $table->foreignId('new_designation_id')->constrained('designations')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->cascadeOnDelete();
+            $table->ulid('previous_designation_id')->constrained('designations')->cascadeOnDelete();
+            $table->ulid('new_designation_id')->constrained('designations')->cascadeOnDelete();
             $table->date('promotion_date');
             $table->date('effective_date');
             $table->decimal('salary_adjustment', 10, 2)->nullable()->default(0);

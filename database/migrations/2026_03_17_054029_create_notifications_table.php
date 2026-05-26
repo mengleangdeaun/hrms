@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('type'); // leave_request, leave_approved, leave_rejected, announcement, birthday, anniversary
             $table->string('title');
             $table->text('message')->nullable();

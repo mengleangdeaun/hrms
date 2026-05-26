@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('media_files', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name');
             $table->string('extension')->nullable();
             $table->string('file_type')->nullable(); // photo, video, audio, document, other
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('mime_type')->nullable();
             $table->string('url')->nullable();
             $table->boolean('is_favorite')->default(false);
-            $table->unsignedBigInteger('folder_id')->nullable();
+            $table->ulid('folder_id')->nullable();
             $table->foreign('folder_id')->references('id')->on('media_folders')->cascadeOnDelete();
             $table->timestamps();
         });

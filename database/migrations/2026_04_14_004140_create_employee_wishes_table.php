@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employee_wishes', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('sender_id');
-            $table->unsignedBigInteger('receiver_id');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('sender_id');
+            $table->ulid('receiver_id');
             $table->enum('type', ['birthday', 'anniversary']);
             $table->text('message')->nullable();
             $table->string('image_path')->nullable();

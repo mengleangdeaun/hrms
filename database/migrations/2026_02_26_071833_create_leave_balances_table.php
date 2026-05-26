@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_balances', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->foreignId('leave_type_id')->constrained('leave_types')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->ulid('leave_type_id')->constrained('leave_types')->onDelete('cascade');
             $table->decimal('total_accrued', 8, 2)->default(0);
             $table->decimal('total_taken', 8, 2)->default(0);
             $table->decimal('balance', 8, 2)->default(0);

@@ -21,9 +21,6 @@
 
     @viteReactRefresh
     @vite(['resources/js/src/main.tsx'])
-    
-    {{-- Telegram Mini App SDK --}}
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 
 <body>

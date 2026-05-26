@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendance_policies', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name')->unique();
             $table->integer('late_tolerance_minutes')->default(0);
             $table->integer('early_departure_tolerance_minutes')->default(0);

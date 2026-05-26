@@ -3,12 +3,15 @@ import BlankLayout from '../components/Layouts/BlankLayout';
 import DefaultLayout from '../components/Layouts/DefaultLayout';
 import MobileLayout from '../components/Layouts/MobileLayout';
 import Error from '../components/Error';
-import { routes } from './routes';
 import AppLayout from '../components/AppLayout';
 
 import ProtectedRoute from '../components/AccessControl/ProtectedRoute';
-import { isEmployeeAppRoute, isTmaRoute } from '../utils/routeHelper';
+import { isEmployeeAppRoute } from '../utils/routeHelper';
 import EmployeePwaError from '../pages/EmployeeApp/Error';
+
+import { employeeRoutes } from './employeeRoutes';
+import { adminRoutes } from './adminRoutes';
+import { superAdminRoutes } from './superAdminRoutes';
 
 // Dynamic Basename detection for subdirectory support (e.g. Laragon/Apache)
 const getBasename = () => {
@@ -18,8 +21,16 @@ const getBasename = () => {
 };
 
 const basename = getBasename();
+const pathname = window.location.pathname;
+const cleanPathname = basename !== '/' ? pathname.replace(basename, '') : pathname;
 
-const finalRoutes = routes.map((route: any) => {
+// Choose routes array depending on URL path prefix to minimize bundle evaluation and keep them clean
+const isEmployee = cleanPathname.includes('/employee') || cleanPathname.includes('/attendance');
+const isSuperAdmin = cleanPathname.includes('/settings/') || cleanPathname.includes('/access-control/');
+
+const chosenRoutes = isEmployee ? employeeRoutes : (isSuperAdmin ? superAdminRoutes : adminRoutes);
+
+const finalRoutes = chosenRoutes.map((route: any) => {
     return {
         ...route,
         element: (
@@ -38,8 +49,8 @@ const finalRoutes = routes.map((route: any) => {
 
 // Context-aware error boundary for PWA/Admin distinction
 const GlobalErrorBoundary = () => {
-    const pathname = window.location.pathname;
-    const isPwa = isEmployeeAppRoute(pathname) || pathname.includes('/attendance/');
+    const currentPath = window.location.pathname;
+    const isPwa = isEmployeeAppRoute(currentPath) || currentPath.includes('/attendance/');
     
     if (isPwa) {
         return <BlankLayout><EmployeePwaError /></BlankLayout>;
@@ -48,7 +59,7 @@ const GlobalErrorBoundary = () => {
     return <BlankLayout><Error /></BlankLayout>;
 };
 
-// A single, top-level route to provide the global error boundary
+// Create router using the segregated configuration
 const router = createBrowserRouter([
     {
         element: <AppLayout />,
@@ -60,3 +71,4 @@ const router = createBrowserRouter([
 });
 
 export default router;
+export { chosenRoutes };

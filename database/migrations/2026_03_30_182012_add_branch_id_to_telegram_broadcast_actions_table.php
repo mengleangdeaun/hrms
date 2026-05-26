@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('telegram_broadcast_actions', function (Blueprint $table) {
-            $table->unsignedBigInteger('branch_id')->nullable()->after('id');
+            $table->ulid('branch_id')->nullable()->after('id');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             
             $table->dropUnique(['action_key']);

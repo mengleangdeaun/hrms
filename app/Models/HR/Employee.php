@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\HR;
+use App\Traits\BelongsToCompany;
 
 use App\Models\Attendance\AttendancePolicy;
 use App\Models\Attendance\AttendanceRecord;
@@ -20,7 +21,7 @@ use NotificationChannels\WebPush\HasPushSubscriptions;
 
 class Employee extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasPushSubscriptions, HasUlids, LogsSystemActivity, Notifiable, ScopesByBranch, SoftDeletes;
+    use HasUlids, BelongsToCompany, HasApiTokens, HasFactory, HasPushSubscriptions, HasUlids, LogsSystemActivity, Notifiable, ScopesByBranch, SoftDeletes;
 
     /**
      * The channels the user receives notification broadcasts on.
@@ -30,9 +31,9 @@ class Employee extends Authenticatable
         return 'App.Models.HR.Employee.'.$this->id;
     }
 
-    protected $keyType = 'int';
+    
 
-    public $incrementing = true;
+    
 
     public function getRouteKeyName()
     {

@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::dropIfExists('media_items');
         
         Schema::create('media_folders', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name');
             $table->string('color')->nullable()->default('#6366f1');
-            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->ulid('parent_id')->nullable();
             $table->foreign('parent_id')->references('id')->on('media_folders')->nullOnDelete();
             $table->timestamps();
         });

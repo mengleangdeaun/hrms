@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employees', function (Blueprint $blueprint) {
-            $blueprint->boolean('is_qc_person')->default(false)->after('is_technician');
+            $blueprint->boolean('is_qc_person')->default(false);
         });
     }
 

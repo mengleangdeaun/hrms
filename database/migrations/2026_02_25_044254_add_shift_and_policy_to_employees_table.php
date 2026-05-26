@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employees', function (Blueprint $table) {
-            $table->foreignId('working_shift_id')->nullable()->constrained('working_shifts')->nullOnDelete();
-            $table->foreignId('attendance_policy_id')->nullable()->constrained('attendance_policies')->nullOnDelete();
+            $table->ulid('working_shift_id')->nullable()->constrained('working_shifts')->nullOnDelete();
+            $table->ulid('attendance_policy_id')->nullable()->constrained('attendance_policies')->nullOnDelete();
         });
     }
 

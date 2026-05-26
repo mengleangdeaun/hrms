@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employee_leave_allocations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
-            $table->foreignId('leave_policy_id')->constrained()->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->onDelete('cascade');
+            $table->ulid('leave_policy_id')->constrained()->onDelete('cascade');
             $table->date('effective_date');
             $table->date('expiration_date')->nullable();
             $table->boolean('is_active')->default(true);

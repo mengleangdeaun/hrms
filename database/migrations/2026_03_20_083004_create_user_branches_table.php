@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_branches', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade'); // Assuming branches table exists
+            $table->ulid('user_id')->constrained()->onDelete('cascade');
+            $table->ulid('branch_id')->constrained('branches')->onDelete('cascade'); // Assuming branches table exists
             $table->boolean('is_primary')->default(false);
             $table->primary(['user_id', 'branch_id']);
         });

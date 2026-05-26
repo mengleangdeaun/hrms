@@ -18,8 +18,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('hr:process-salary-movements')->dailyAt('00:00');
         $schedule->command('health:check')->daily();
         $schedule->command('health:prune --older-than-days=7')->daily();
-        $schedule->command('exchange-rate:sync')->dailyAt('09:00');
-        $schedule->command('exchange-rate:sync')->dailyAt('15:00');
+
 
         // Server Wake-up Alarms (Always Warm during the day)
         $schedule->command('app:wake-up')->at('06:30');

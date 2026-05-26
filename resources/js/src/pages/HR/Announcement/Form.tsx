@@ -30,8 +30,7 @@ import { Card, Label, Toggle } from './components/FormElements';
 import { PwaPreview } from './components/PwaPreview';
 import { TargetingSection } from './components/TargetingSection';
 import MediaSelector, { MediaFile } from '@/components/MediaSelector';
-import { CropperModal } from '../../CRM/TmaPortal/components/CropperModal';
-import { AspectRatioMode } from '../../CRM/TmaPortal/types/broadcast';
+import { CropperModal, AspectRatioMode } from '@/components/ui/CropperModal';
 import { Area } from 'react-easy-crop';
 
 const defaultForm: AnnouncementFormData = {

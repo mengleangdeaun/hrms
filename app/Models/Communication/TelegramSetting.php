@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\Communication;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\LogsSystemActivity;

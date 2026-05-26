@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('resignations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->cascadeOnDelete();
             $table->date('resignation_date');
             $table->date('last_working_day');
             $table->unsignedTinyInteger('notice_period')->default(30)->comment('In days');

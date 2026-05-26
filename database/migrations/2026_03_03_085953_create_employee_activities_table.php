@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employee_activities', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->onDelete('cascade');
             $table->string('photo_path');
             $table->text('comment')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();

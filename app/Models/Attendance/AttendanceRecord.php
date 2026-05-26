@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\Attendance;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +13,7 @@ use App\Traits\LogsSystemActivity;
 
 class AttendanceRecord extends Model
 {
-    use HasFactory;
+    use HasUlids, BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'employee_id',

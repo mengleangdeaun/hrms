@@ -1,37 +1,35 @@
 import * as React from "react"
-import { Slot, Slottable } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative overflow-hidden",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 ",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
-          "hover:bg-accent ",
-        link:
-          "text-primary underline-offset-4 hover:underline",
-        // ✨ New soft variants
-        "soft-default":
-          "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20",
-        "soft-destructive":
-          "bg-destructive/10 text-destructive border text-red-500 border-red-500/20 hover:bg-destructive/20",
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default:
+          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-6 gap-1 rounded-none px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-none px-2.5 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        icon: "size-8",
+        "icon-xs": "size-6 rounded-none [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-7 rounded-none",
+        "icon-lg": "size-9",
       },
     },
     defaultVariants: {
@@ -41,158 +39,27 @@ const buttonVariants = cva(
   }
 )
 
-// ── Ripple colour per variant ──────────────────────────────────────────────────
-const rippleColorMap: Record<string, string> = {
-  default: "rgba(255,255,255,0.30)",
-  destructive: "rgba(255,255,255,0.30)",
-  outline: "rgba(0,0,0,0.10)",
-  secondary: "rgba(0,0,0,0.10)",
-  ghost: "rgba(0,0,0,0.10)",
-  link: "transparent",
-  // ✨ New soft variants
-  "soft-default": "rgba(0,0,0,0.10)",
-  "soft-destructive": "rgba(0,0,0,0.10)",
-}
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot.Root : "button"
 
-interface Ripple {
-  id: number
-  x: number
-  y: number
-  size: number
-}
-
-// ── useRipple hook ─────────────────────────────────────────────────────────────
-function useRipple(variant: string = "default") {
-  const [ripples, setRipples] = React.useState<Ripple[]>([])
-
-  const addRipple = React.useCallback(
-    (e: React.MouseEvent<HTMLElement>) => {
-      const el = e.currentTarget
-      const rect = el.getBoundingClientRect()
-      const size = Math.hypot(rect.width, rect.height) * 2
-      const x = e.clientX - rect.left - size / 2
-      const y = e.clientY - rect.top - size / 2
-      const id = Date.now()
-
-      setRipples(prev => [...prev, { id, x, y, size }])
-
-      setTimeout(() => {
-        setRipples(prev => prev.filter(r => r.id !== id))
-      }, 600)
-    },
-    []
+  return (
+    <Comp
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
   )
-
-  const rippleColor = rippleColorMap[variant] ?? "rgba(255,255,255,0.25)"
-
-  const rippleElements = (
-    <>
-      {ripples.map(({ id, x, y, size }) => (
-        <span
-          key={id}
-          aria-hidden
-          style={{
-            position: "absolute",
-            left: x,
-            top: y,
-            width: size,
-            height: size,
-            borderRadius: "50%",
-            background: rippleColor,
-            transform: "scale(0)",
-            animation: "button-ripple 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards",
-            pointerEvents: "none",
-          }}
-        />
-      ))}
-      <style>{`
-        @keyframes button-ripple {
-          to {
-            transform: scale(1);
-            opacity: 0;
-          }
-        }
-      `}</style>
-    </>
-  )
-
-  return { addRipple, rippleElements }
 }
-
-// ── ButtonProps ────────────────────────────────────────────────────────────────
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
-  asChild?: boolean
-  isLoading?: boolean
-}
-
-// ── Button ─────────────────────────────────────────────────────────────────────
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading = false, onClick, children, disabled, ...props }, ref) => {
-    const { addRipple, rippleElements } = useRipple(variant ?? "default")
-
-    const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (isLoading) return
-        addRipple(e)
-        onClick?.(e)
-      },
-      [addRipple, onClick, isLoading]
-    )
-
-    if (asChild) {
-      return (
-        <Slot
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </Slot>
-      )
-    }
-
-    return (
-      <button
-        ref={ref}
-        className={cn(buttonVariants({ variant, size, className }))}
-        onClick={handleClick}
-        disabled={isLoading || disabled}
-        {...props}
-      >
-        <span className={cn("flex items-center justify-center gap-2", isLoading && "opacity-0")}>
-          {children}
-        </span>
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <svg
-              className="animate-spin h-5 w-5 text-current"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          </div>
-        )}
-        {rippleElements}
-      </button>
-    )
-  }
-)
-Button.displayName = "Button"
 
 export { Button, buttonVariants }

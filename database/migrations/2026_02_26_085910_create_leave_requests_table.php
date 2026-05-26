@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('leave_requests', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
-            $table->foreignId('leave_type_id')->constrained()->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->onDelete('cascade');
+            $table->ulid('leave_type_id')->constrained()->onDelete('cascade');
             $table->enum('duration_type', ['full_day', 'first_half', 'second_half', 'multi_day', 'custom_time']);
             $table->date('start_date');
             $table->date('end_date');
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->decimal('total_days', 5, 2);
             $table->text('reason');
             $table->enum('status', ['pending', 'approved', 'rejected', 'cancelled'])->default('pending');
-            $table->foreignId('approved_by')->nullable()->constrained('employees')->nullOnDelete();
+            $table->ulid('approved_by')->nullable()->constrained('employees')->nullOnDelete();
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
         });

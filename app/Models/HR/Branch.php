@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\HR;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use App\Models\Inventory\Product;
 
@@ -12,7 +15,7 @@ use App\Traits\LogsSystemActivity;
 
 class Branch extends Model
 {
-    use HasFactory, LogsSystemActivity;
+    use HasUlids, BelongsToCompany, HasFactory, LogsSystemActivity;
 
     protected $fillable = [
         'name',

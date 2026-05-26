@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\HR;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -8,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SalaryMovement extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasUlids, BelongsToCompany, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'employee_id',

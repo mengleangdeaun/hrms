@@ -2,6 +2,7 @@
 
 namespace App\Models\Auth;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Auth\User;
@@ -9,7 +10,7 @@ use App\Traits\LogsSystemActivity;
 
 class Role extends Model
 {
-    use HasFactory;
+    use HasUlids, HasFactory;
 
     protected $fillable = ['name', 'slug', 'description'];
 

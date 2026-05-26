@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('day_off_requests', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained('employees')->cascadeOnDelete();
             $table->enum('request_type', ['change', 'swap'])->default('change');
             $table->json('current_days_off'); // snapshot of current assignment
             $table->json('requested_days_off'); // what employee wants
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->date('effective_to')->nullable(); // null = permanent
             $table->text('reason');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->foreignId('approved_by')->nullable()->constrained('employees')->nullOnDelete();
+            $table->ulid('approved_by')->nullable()->constrained('employees')->nullOnDelete();
             $table->text('rejection_reason')->nullable();
             $table->timestamps();
 

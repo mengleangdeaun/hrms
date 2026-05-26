@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_activity_logs', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('log_name')->nullable()->index();
             $table->text('description');
             

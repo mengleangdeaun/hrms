@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('employee_leave_allocations', function (Blueprint $table) {
-            $table->foreignId('approved_by')->nullable()->after('is_active')->constrained('employees')->nullOnDelete();
+            $table->ulid('approved_by')->nullable()->after('is_active')->constrained('employees')->nullOnDelete();
         });
     }
 

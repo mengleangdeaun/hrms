@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('warnings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->cascadeOnDelete();
             $table->string('warning_by');             // Name or designation of issuer
             $table->string('warning_type');           // e.g. Verbal, Written, Final
             $table->string('subject');

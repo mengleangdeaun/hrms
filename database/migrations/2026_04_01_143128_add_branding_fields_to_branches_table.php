@@ -18,10 +18,6 @@ return new class extends Migration
             if (!Schema::hasColumn('branches', 'footer_text')) {
                 $table->text('footer_text')->nullable()->after('logo_url');
             }
-            if (!Schema::hasColumn('branches', 'payment_account_id')) {
-                $table->unsignedBigInteger('payment_account_id')->nullable()->after('footer_text');
-                $table->foreign('payment_account_id')->references('id')->on('payment_accounts')->onDelete('set null');
-            }
         });
     }
 
@@ -31,10 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('branches', function (Blueprint $table) {
-            if (Schema::hasColumn('branches', 'payment_account_id')) {
-                $table->dropForeign(['payment_account_id']);
-            }
-            $table->dropColumn(['logo_url', 'footer_text', 'payment_account_id']);
+            $table->dropColumn(['logo_url', 'footer_text']);
         });
     }
 };

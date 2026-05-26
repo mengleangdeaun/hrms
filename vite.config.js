@@ -3,9 +3,11 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import laravel from "laravel-vite-plugin";
 import { VitePWA } from "vite-plugin-pwa";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     plugins: [
+        tailwindcss(),
         laravel(["resources/js/src/main.tsx"]), 
         react(),
         VitePWA({

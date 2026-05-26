@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('award_types', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->text('description')->nullable();

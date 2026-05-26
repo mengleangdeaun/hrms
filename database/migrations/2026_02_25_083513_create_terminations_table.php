@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('terminations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->cascadeOnDelete();
             $table->string('termination_type'); // e.g. Resignation, Layoff, Misconduct, End of Contract
             $table->date('notice_date')->nullable();
             $table->date('termination_date');

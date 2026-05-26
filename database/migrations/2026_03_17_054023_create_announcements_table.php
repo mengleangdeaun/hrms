@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('announcements', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('title');
             $table->string('type')->default('info'); // info, success, warning, danger
             $table->text('short_description')->nullable();
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->json('target_ids')->nullable();
             $table->dateTime('published_at')->nullable();
             $table->string('status')->default('draft'); // draft, published, expired
-            $table->foreignId('created_by')->constrained('users');
+            $table->ulid('created_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

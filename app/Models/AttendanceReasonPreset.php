@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Models;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class AttendanceReasonPreset extends Model
 {
-    use HasFactory;
+    use HasUlids, BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'reason_text',

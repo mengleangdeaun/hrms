@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('working_shifts', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('name')->unique();
             $table->time('start_time');
             $table->time('end_time');

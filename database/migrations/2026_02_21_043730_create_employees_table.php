@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
 
             // Basic Information
             $table->string('full_name');
@@ -27,9 +28,9 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
 
             // Employment Details
-            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
-            $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
-            $table->foreignId('designation_id')->nullable()->constrained('designations')->nullOnDelete();
+            $table->ulid('branch_id')->nullable()->constrained('branches')->nullOnDelete();
+            $table->ulid('department_id')->nullable()->constrained('departments')->nullOnDelete();
+            $table->ulid('designation_id')->nullable()->constrained('designations')->nullOnDelete();
             $table->date('date_of_joining')->nullable();
             $table->enum('employment_type', ['full_time', 'part_time', 'contract', 'intern', 'freelance'])->default('full_time');
             $table->enum('status', ['active', 'inactive', 'on_leave', 'terminated'])->default('active');
@@ -59,9 +60,10 @@ return new class extends Migration
         });
 
         Schema::create('employee_documents', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
-            $table->foreignId('document_type_id')->nullable()->constrained('document_types')->nullOnDelete();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained('employees')->cascadeOnDelete();
+            $table->ulid('document_type_id')->nullable()->constrained('document_types')->nullOnDelete();
             $table->string('file_path');
             $table->string('original_name');
             $table->timestamps();

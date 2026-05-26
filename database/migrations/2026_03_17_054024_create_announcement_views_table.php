@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('announcement_views', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('announcement_id')->constrained('announcements')->onDelete('cascade');
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('announcement_id')->constrained('announcements')->onDelete('cascade');
+            $table->ulid('employee_id')->constrained('employees')->onDelete('cascade');
             $table->timestamp('viewed_at');
             $table->timestamps();
         });

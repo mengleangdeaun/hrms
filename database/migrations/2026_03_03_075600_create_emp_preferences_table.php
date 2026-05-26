@@ -9,8 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('emp_preferences', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
+            $table->ulid('employee_id')->constrained()->onDelete('cascade');
             $table->string('font_family', 50)->default('Inter');
             $table->string('font_size', 20)->default('medium');   // small | medium | large
             $table->string('color_theme', 30)->default('default');

@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\Leave;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use App\Models\HR\Employee;
 
@@ -10,7 +13,7 @@ use App\Traits\LogsSystemActivity;
 
 class EmployeeLeaveAllocation extends Model
 {
-    use HasFactory;
+    use HasUlids, BelongsToCompany, HasFactory;
 
     protected $fillable = [
         'employee_id',

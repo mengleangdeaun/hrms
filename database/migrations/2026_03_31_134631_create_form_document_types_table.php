@@ -13,7 +13,8 @@ return new class extends Migration
     {
         if (!Schema::hasTable('form_document_types')) {
             Schema::create('form_document_types', function (Blueprint $table) {
-                $table->id();
+                $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
                 $table->string('name');
                 $table->string('slug');
                 $table->boolean('is_active')->default(1);

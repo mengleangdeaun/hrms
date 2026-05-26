@@ -9,20 +9,7 @@ use App\Http\Controllers\SystemHealthController;
 Route::get('health', SystemHealthController::class);
 Route::post('health/check', [SystemHealthController::class, 'runCheck']);
 
-// Public TMA Routes
-Route::prefix('crm/tma')->group(function () {
-    Route::post('auth', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'auth']);
-    Route::post('link-contact', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'linkContact']);
-});
-
-// Public Feedback Routes
-Route::get('public/feedback-metadata', function() {
-    return response()->json([
-        'branches' => \App\Models\HR\Branch::where('status', 'active')->select('id', 'name')->get(),
-        'services' => \App\Models\Workshop\Service::where('is_active', 1)->select('id', 'name')->get(),
-    ]);
-});
-Route::post('public/customer-feedback', [\App\Http\Controllers\Api\CRM\CustomerFeedbackController::class, 'store'])->middleware([\Illuminate\Routing\Middleware\ThrottleRequests::class.':2,5']);
+// Cleaned non-HR routes
 
 
 
@@ -45,10 +32,6 @@ Route::post('forgot-password', [App\Http\Controllers\Auth\PasswordResetControlle
 Route::post('reset-password', [App\Http\Controllers\Auth\PasswordResetController::class, 'reset']);
 
 Route::middleware([\App\Http\Middleware\Authenticate::class.':sanctum'])->group(function () {
-    // Super Dashboard & Daily Reporting
-    Route::get('dashboard/super/stats', [\App\Http\Controllers\Api\System\SuperDashboardController::class, 'getStats']);
-    Route::post('dashboard/super/report', [\App\Http\Controllers\Api\System\SuperDashboardController::class, 'submitReport']);
-
     Route::get('user', function (Request $request) {
         return new \App\Http\Resources\Auth\UserResource($request->user()->load(['roles', 'employee', 'roles.permissions', 'branches']));
     });
@@ -70,10 +53,6 @@ Route::middleware([\App\Http\Middleware\Authenticate::class.':sanctum'])->group(
     Route::prefix('hr')->group(function () {
         Route::apiResource('branches', App\Http\Controllers\HR\BranchController::class);
         Route::post('branches/{id}/link-location', [App\Http\Controllers\HR\BranchController::class, 'linkLocation']);
-        Route::get('branches/{id}/products', [App\Http\Controllers\HR\BranchProductController::class, 'index']);
-        Route::post('branches/{id}/products/sync', [App\Http\Controllers\HR\BranchProductController::class, 'sync']);
-        Route::get('branches/{id}/services', [App\Http\Controllers\HR\BranchServiceController::class, 'index']);
-        Route::post('branches/{id}/services/sync', [App\Http\Controllers\HR\BranchServiceController::class, 'sync']);
         Route::apiResource('departments', App\Http\Controllers\HR\DepartmentController::class);
         Route::apiResource('designations', App\Http\Controllers\HR\DesignationController::class);
         Route::apiResource('document-types', App\Http\Controllers\HR\DocumentTypeController::class);
@@ -210,7 +189,6 @@ Route::middleware([\App\Http\Middleware\Authenticate::class.':sanctum'])->group(
         Route::post('branding/global', [App\Http\Controllers\Settings\BrandingController::class, 'updateGlobal']);
         Route::get('branding/branches', [App\Http\Controllers\Settings\BrandingController::class, 'getBranches']);
         Route::put('branding/branches/{branch}', [App\Http\Controllers\Settings\BrandingController::class, 'updateBranch']);
-        Route::get('branding/payment-accounts', [App\Http\Controllers\Settings\BrandingController::class, 'getPaymentAccounts']);
 
         // PWA Settings
         Route::get('pwa-settings', [App\Http\Controllers\Settings\PwaSettingController::class, 'show']);
@@ -218,188 +196,6 @@ Route::middleware([\App\Http\Middleware\Authenticate::class.':sanctum'])->group(
         Route::get('app-feedbacks', [App\Http\Controllers\Settings\AppFeedbackController::class, 'index']);
         Route::put('app-feedbacks/{id}/status', [App\Http\Controllers\Settings\AppFeedbackController::class, 'updateStatus']);
         Route::delete('app-feedbacks/{id}', [App\Http\Controllers\Settings\AppFeedbackController::class, 'destroy']);
-
-        // Exchange Rate Settings
-        Route::get('exchange-rate', [App\Http\Controllers\Settings\ExchangeRateController::class, 'getSettings']);
-        Route::post('exchange-rate', [App\Http\Controllers\Settings\ExchangeRateController::class, 'saveSettings']);
-        Route::get('exchange-rate/live', [App\Http\Controllers\Settings\ExchangeRateController::class, 'getLiveRate']);
-        Route::post('exchange-rate/sync', [App\Http\Controllers\Settings\ExchangeRateController::class, 'syncLiveRate']);
-    });
-
-    Route::prefix('inventory')->group(function () {
-        Route::apiResource('categories', \App\Http\Controllers\Inventory\CategoryController::class);
-        Route::apiResource('tags', \App\Http\Controllers\Inventory\TagController::class);
-        Route::apiResource('uoms', \App\Http\Controllers\Inventory\UomController::class);
-        Route::apiResource('locations', \App\Http\Controllers\Inventory\LocationController::class);
-        Route::post('reorder-products', [\App\Http\Controllers\Inventory\ProductController::class, 'reorder']);
-        Route::get('products/import-template', [\App\Http\Controllers\Inventory\ProductController::class, 'importTemplate']);
-        Route::post('products/import', [\App\Http\Controllers\Inventory\ProductController::class, 'import']);
-        Route::apiResource('products', \App\Http\Controllers\Inventory\ProductController::class);
-        Route::apiResource('suppliers', \App\Http\Controllers\Inventory\SupplierController::class);
-        Route::apiResource('purchase-orders', \App\Http\Controllers\Inventory\PurchaseOrderController::class);
-        Route::post('purchase-orders/{id}/follow-up', [\App\Http\Controllers\Inventory\PurchaseOrderController::class, 'followUp']);
-        Route::apiResource('purchase-receives', PurchaseReceiveController::class)->except(['update']);
-        Route::get('purchase-orders/{id}/pending-items', [PurchaseReceiveController::class, 'getPendingItems']);
-    });
-
-    Route::prefix('stock')->group(function () {
-        Route::get('dashboard', [\App\Http\Controllers\Inventory\InventoryDashboardController::class, 'index']);
-        Route::get('stock-balance/export', [\App\Http\Controllers\Inventory\StockBalanceController::class, 'export']);
-        Route::get('stock-balance', [\App\Http\Controllers\Inventory\StockBalanceController::class, 'index']);
-        Route::get('stocks/export', [\App\Http\Controllers\Inventory\StockController::class, 'export']);
-        Route::apiResource('stocks', \App\Http\Controllers\Inventory\StockController::class)->except(['update', 'destroy', 'show']);
-        Route::put('stocks/{id}/adjust', [\App\Http\Controllers\Inventory\StockController::class, 'adjust']);
-        Route::get('stock-movements/export', [\App\Http\Controllers\Inventory\StockMovementController::class, 'export']);
-        Route::get('stock-movements', [\App\Http\Controllers\Inventory\StockMovementController::class, 'index']);
-        Route::get('stock-movements/{id}', [\App\Http\Controllers\Inventory\StockMovementController::class, 'show']);
-        Route::get('serial-movements/export', [\App\Http\Controllers\Inventory\SerialMovementController::class, 'export']);
-        Route::get('serial-movements', [\App\Http\Controllers\Inventory\SerialMovementController::class, 'index']);
-        Route::get('serial-movements/{id}', [\App\Http\Controllers\Inventory\SerialMovementController::class, 'show']);
-        Route::get('off-cut-serials/export', [\App\Http\Controllers\Inventory\InventoryOffCutSerialController::class, 'export']);
-        Route::get('off-cut-serials', [\App\Http\Controllers\Inventory\InventoryOffCutSerialController::class, 'index']);
-        Route::get('off-cut-serials/{id}', [\App\Http\Controllers\Inventory\InventoryOffCutSerialController::class, 'show']);
-        
-        Route::get('adjustments/export', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'export']);
-        Route::apiResource('adjustments', \App\Http\Controllers\Inventory\StockAdjustmentController::class);
-        Route::post('adjustments/{id}/approve', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'approve']);
-        Route::post('adjustments/{id}/reject', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'reject']);
-        Route::post('adjustments/{id}/complete', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'complete']);
-        
-        Route::get('transfers/export', [\App\Http\Controllers\Inventory\StockTransferController::class, 'export']);
-        Route::apiResource('transfers', \App\Http\Controllers\Inventory\StockTransferController::class);
-        Route::post('transfers/{id}/approve', [\App\Http\Controllers\Inventory\StockTransferController::class, 'approve']);
-        Route::post('transfers/{id}/reject', [\App\Http\Controllers\Inventory\StockTransferController::class, 'reject']);
-    });
-
-    Route::prefix('crm')->group(function () {
-        Route::get('customers/next-code', [\App\Http\Controllers\CustomerController::class, 'getNextCode']);
-        Route::apiResource('customer-types', \App\Http\Controllers\CustomerTypeController::class);
-        Route::apiResource('customers', \App\Http\Controllers\CustomerController::class);
-        Route::apiResource('customer-vehicles', \App\Http\Controllers\CustomerVehicleController::class);
-        Route::get('banners/categories', [App\Http\Controllers\Api\CRM\BannerController::class, 'categories']);
-        Route::apiResource('banners', \App\Http\Controllers\Api\CRM\BannerController::class);
-        Route::apiResource('contact-categories', App\Http\Controllers\CRM\ContactCategoryController::class);
-        Route::post('contacts/{contact}/promote', [App\Http\Controllers\CRM\ContactController::class, 'promote']);
-        Route::post('contacts/{contact}/sync-hierarchy', [App\Http\Controllers\CRM\ContactController::class, 'syncHierarchy']);
-        Route::delete('contacts/{contact}/attachments/{attachment}', [App\Http\Controllers\CRM\ContactController::class, 'deleteAttachment']);
-        Route::apiResource('contacts', App\Http\Controllers\CRM\ContactController::class);
-        Route::apiResource('pipelines', App\Http\Controllers\CRM\LeadPipelineController::class);
-        Route::put('pipelines/{pipeline}/stages', [App\Http\Controllers\CRM\LeadPipelineController::class, 'updateStages']);
-        Route::post('leads/bulk-update', [App\Http\Controllers\CRM\LeadController::class, 'bulkUpdate']);
-        Route::post('leads/{lead}/notes', [App\Http\Controllers\CRM\LeadController::class, 'addNote']);
-        Route::apiResource('leads', App\Http\Controllers\CRM\LeadController::class);
-        Route::get('customer-feedback/export', [\App\Http\Controllers\Api\CRM\CustomerFeedbackController::class, 'export']);
-        Route::apiResource('customer-feedback', \App\Http\Controllers\Api\CRM\CustomerFeedbackController::class)->only(['index']);
-        Route::patch('customer-feedback/{feedback}/status', [\App\Http\Controllers\Api\CRM\CustomerFeedbackController::class, 'updateStatus']);
-        Route::get('job-card-ratings/export', [\App\Http\Controllers\Api\Workshop\JobCardRatingController::class, 'export']);
-        Route::get('job-card-ratings', [\App\Http\Controllers\Api\Workshop\JobCardRatingController::class, 'index']);
-        Route::prefix('tma')->group(function () {
-            Route::get('settings', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'getSettings']);
-            Route::post('settings', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'updateSettings']);
-            Route::post('broadcast', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'broadcast']);
-            Route::get('broadcasts', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'getBroadcasts']);
-            Route::get('broadcasts/export', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'exportBroadcasts']);
-            Route::post('broadcasts/bulk-delete', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'bulkDelete']);
-            Route::post('broadcasts/archive', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'archive']);
-            Route::get('customer-types', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'getCustomerTypes']);
-            Route::get('linked-customers', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'getLinkedCustomers']);
-            
-            // Booking Management (Admin)
-            Route::get('bookings', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'getAllBookings']);
-            Route::patch('bookings/{booking}/status', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'updateBookingStatus']);
-            Route::get('bookings/export', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'exportBookings']);
-        });
-        Route::prefix('tma')->middleware([\App\Http\Middleware\Authenticate::class.':sanctum,customers'])->group(function () {
-            Route::get('/dashboard', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'dashboard']);
-            Route::post('/mark-as-viewed', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'markAsViewed']);
-            Route::get('/history', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'history']);
-            Route::get('/garage', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'garage']);
-            Route::get('/job-cards/{id}', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'jobDetail']);
-            Route::post('/profile/settings', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'updateProfileSettings']);
-            Route::post('/logout', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'logout']);
-            Route::post('/job-cards/rate', [\App\Http\Controllers\JobCardController::class, 'storeRating']);
-            Route::post('/job-cards/rate/update', [\App\Http\Controllers\JobCardController::class, 'updateRating']);
-            Route::get('bookings/metadata', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'bookingMetadata']);
-            Route::get('bookings/history', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'bookingHistory']);
-            Route::post('bookings', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'storeBooking']);
-
-            // Services & Products Listing (Paginated)
-            Route::get('services', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'services']);
-            Route::get('services/{id}', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'serviceDetail']);
-            Route::get('products', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'products']);
-            Route::get('products/{id}', [\App\Http\Controllers\Api\Tma\TmaPortalController::class, 'productDetail']);
-        });
-    });
-
-    Route::prefix('services')->group(function () {
-        Route::apiResource('list', \App\Http\Controllers\ServiceController::class);
-        Route::apiResource('parts', \App\Http\Controllers\JobPartController::class);
-        Route::apiResource('vehicle-brands', \App\Http\Controllers\VehicleBrandController::class);
-        Route::apiResource('vehicle-models', \App\Http\Controllers\VehicleModelController::class);
-        Route::apiResource('damage-types', \App\Http\Controllers\JobCardDamageTypeController::class);
-        Route::get('tech-performance', [\App\Http\Controllers\Api\TechPerformanceController::class, 'index']);
-        Route::get('job-cards/qc', [\App\Http\Controllers\JobCardQCController::class, 'index']);
-        Route::get('job-cards/qc/export', [\App\Http\Controllers\JobCardQCController::class, 'exportQC']);
-        Route::get('job-cards/damages', [\App\Http\Controllers\DamageReportController::class, 'index']);
-        Route::get('job-cards/damages/export', [\App\Http\Controllers\DamageReportController::class, 'export']);
-        Route::post('damage-reports', [\App\Http\Controllers\DamageReportController::class, 'store']);
-        Route::get('damage-reports/available-serials', [\App\Http\Controllers\DamageReportController::class, 'availableSerials']);
-        Route::post('job-cards/qc', [\App\Http\Controllers\JobCardQCController::class, 'store']);
-        Route::post('job-cards/qc/{id}/archive', [\App\Http\Controllers\JobCardQCController::class, 'archive']);
-        Route::post('job-cards/qc/{id}/unarchive', [\App\Http\Controllers\JobCardQCController::class, 'unarchive']);
-        Route::post('job-cards/qc/bulk-archive', [\App\Http\Controllers\JobCardQCController::class, 'bulkArchive']);
-        Route::post('job-cards/qc/bulk-unarchive', [\App\Http\Controllers\JobCardQCController::class, 'bulkUnarchive']);
-        Route::get('job-cards', [\App\Http\Controllers\JobCardController::class, 'index']);
-        Route::get('job-cards/{id}', [\App\Http\Controllers\JobCardController::class, 'show']);
-        Route::get('job-cards/{id}/warranty-data', [\App\Http\Controllers\JobCardController::class, 'warrantyData']);
-        Route::put('job-cards/{id}', [\App\Http\Controllers\JobCardController::class, 'update']);
-        Route::get('job-cards/{id}/qc', [\App\Http\Controllers\JobCardQCController::class, 'show']);
-        Route::put('job-cards/{id}/items', [\App\Http\Controllers\JobCardController::class, 'updateItems']);
-        Route::put('job-cards/items/{itemId}', [\App\Http\Controllers\JobCardController::class, 'updateItem']);
-        Route::post('job-cards/material-usage', [\App\Http\Controllers\JobCardController::class, 'storeMaterialUsage']);
-        Route::put('job-cards/material-usage/{usageId}', [\App\Http\Controllers\JobCardController::class, 'updateMaterialUsage']);
-        Route::get('inventory/products/{productId}/serials', [\App\Http\Controllers\JobCardController::class, 'getAvailableSerials']);
-        Route::post('job-cards/{id}/complete', [\App\Http\Controllers\JobCardController::class, 'complete']);
-        Route::post('job-cards/{id}/replacement', [\App\Http\Controllers\JobCardController::class, 'createReplacement']);
-        Route::post('job-cards/{id}/notify-progress', [\App\Http\Controllers\JobCardController::class, 'notifyProgressSync']);
-        Route::get('inventory/serials/settings', [\App\Http\Controllers\Inventory\InventoryProductSerialController::class, 'getSettings']);
-        Route::post('inventory/serials/settings', [\App\Http\Controllers\Inventory\InventoryProductSerialController::class, 'updateSettings']);
-        Route::get('inventory/serials/suggest-next', [\App\Http\Controllers\Inventory\InventoryProductSerialController::class, 'suggestNext']);
-        Route::apiResource('inventory/serials', \App\Http\Controllers\Inventory\InventoryProductSerialController::class);
-        Route::get('inventory/serials/{id}/history', [\App\Http\Controllers\Inventory\InventoryProductSerialController::class, 'history']);
-    });
-
-    Route::prefix('sales')->group(function () {
-        Route::get('dashboard/stats', [\App\Http\Controllers\Api\Sales\SaleDashboardController::class, 'getStats']);
-        Route::get('dashboard/shift', [\App\Http\Controllers\Api\Sales\SaleDashboardController::class, 'getCurrentShift']);
-        Route::post('dashboard/shift/open', [\App\Http\Controllers\Api\Sales\SaleDashboardController::class, 'openShift']);
-        Route::post('dashboard/shift/{shift}/close', [\App\Http\Controllers\Api\Sales\SaleDashboardController::class, 'closeShift']);
-
-        Route::apiResource('remarks', \App\Http\Controllers\SaleRemarkController::class);
-        Route::apiResource('orders', \App\Http\Controllers\SalesOrderController::class);
-        Route::apiResource('invoices', \App\Http\Controllers\SalesInvoiceController::class);
-        Route::apiResource('quotations', \App\Http\Controllers\SalesQuotationController::class);
-        Route::post('quotations/{id}/convert', [\App\Http\Controllers\SalesQuotationController::class, 'convertToOrder']);
-        Route::post('orders/{id}/cancel', [\App\Http\Controllers\SalesOrderController::class, 'cancel']);
-        Route::post('orders/{id}/deposits', [\App\Http\Controllers\SalesOrderController::class, 'addDeposit']);
-        Route::put('deposits/{id}', [\App\Http\Controllers\SalesOrderController::class, 'updateDeposit']);
-        Route::delete('deposits/{id}', [\App\Http\Controllers\SalesOrderController::class, 'deleteDeposit']);
-    });
-
-    Route::prefix('finance')->group(function () {
-        Route::get('dashboard/stats', [\App\Http\Controllers\Api\Finance\FinanceDashboardController::class, 'getStats']);
-        Route::apiResource('payment-accounts', \App\Http\Controllers\Finance\PaymentAccountController::class);
-        Route::get('expenses/categories', [\App\Http\Controllers\Finance\ExpenseController::class, 'categories']);
-        Route::post('expenses/categories', [\App\Http\Controllers\Finance\ExpenseController::class, 'storeCategory']);
-        Route::put('expenses/categories/{id}', [\App\Http\Controllers\Finance\ExpenseController::class, 'updateCategory']);
-        Route::delete('expenses/categories/{id}', [\App\Http\Controllers\Finance\ExpenseController::class, 'destroyCategory']);
-        Route::apiResource('expenses', \App\Http\Controllers\Finance\ExpenseController::class);
-        Route::get('incomes/categories', [\App\Http\Controllers\Finance\IncomeController::class, 'categories']);
-        Route::post('incomes/categories', [\App\Http\Controllers\Finance\IncomeController::class, 'storeCategory']);
-        Route::put('incomes/categories/{id}', [\App\Http\Controllers\Finance\IncomeController::class, 'updateCategory']);
-        Route::delete('incomes/categories/{id}', [\App\Http\Controllers\Finance\IncomeController::class, 'destroyCategory']);
-        Route::apiResource('incomes', \App\Http\Controllers\Finance\IncomeController::class);
-        Route::get('transactions', [\App\Http\Controllers\Finance\TransactionController::class, 'index']);
     });
 
     // Access Control Routes
@@ -421,8 +217,7 @@ Route::prefix('attendance')->group(function () {
     Route::post('scan/clock', [App\Http\Controllers\Attendance\QrAttendanceController::class, 'scanClock']);
 });
 
-// Public Serial Scan
-Route::get('scan/serials/{serialNumber}', [\App\Http\Controllers\Inventory\InventoryProductSerialController::class, 'scanLookup']);
+
 
 // Employee PWA Routes (Secured via custom auth.employee guard)
 Route::prefix('employee-app')->middleware([\App\Http\Middleware\AuthenticateEmployeeByToken::class])->group(function () {

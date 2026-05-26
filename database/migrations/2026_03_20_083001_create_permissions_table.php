@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permissions', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->nullable()->index();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('module')->nullable();

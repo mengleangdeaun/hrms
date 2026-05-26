@@ -12,16 +12,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 1. Create Default Company
+        $company = \App\Models\Company::firstOrCreate(
+            ['name' => 'Default Company']
+        );
+
+        // 2. Set the static property to auto-scope all seeded records to the default company
+        \App\Traits\BelongsToCompany::$companyIdForSeeding = $company->id;
+
         $this->call([
             AccessControlSeeder::class,
             UserSeeder::class,
-            CustomerTypeSeeder::class,
-            CRMDefaultSeeder::class,
-            FinanceCategorySeeder::class,
-            CarBrandModelSeeder::class,
-            JobPartsSeeder::class,
-            InventoryUomSeeder::class,
-            SaleRemarkSeeder::class,
             TelegramBroadcastActionSeeder::class,
             DocumentTemplateSeeder::class,
         ]);

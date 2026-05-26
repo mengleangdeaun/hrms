@@ -33,13 +33,7 @@ const Index = () => {
             const isSuperAdmin = user.roles?.some((r: any) => r.slug === 'super-admin' || r.name === 'Super Admin');
             const p = user.permissions || [];
 
-            if (isSuperAdmin) {
-                navigate('/dashboard/super', { replace: true });
-            } else if (p.includes('view_sales')) {
-                navigate('/dashboard/sales', { replace: true });
-            } else if (p.includes('view_finance')) {
-                navigate('/dashboard/finance', { replace: true });
-            } else if (p.includes('view_hr')) {
+            if (isSuperAdmin || p.includes('view_hr') || p.includes('view_attendance')) {
                 navigate('/hr/employees', { replace: true });
             } else {
                 if (window.location.pathname === '/') {
@@ -98,10 +92,10 @@ const Index = () => {
                         />
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-4">
-                        Enterprise <span className="text-primary">Portal</span>
+                        HRMS <span className="text-primary">Portal</span>
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">
-                        Welcome to SCCG ERP. Please select your workspace to continue to your dashboard.
+                        Welcome to SCCG HRMS. Please select your workspace to continue to your dashboard.
                     </p>
                 </motion.div>
 
@@ -126,7 +120,7 @@ const Index = () => {
                                 Administration
                             </h2>
                             <p className="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed">
-                                Access the core ERP system, manage crm, sales, inventory, workshop, finance, HR, and other modules.
+                                Access the core HRMS system, manage employees, attendance, leave, settings, and other modules.
                             </p>
                             
                             <div className="flex items-center gap-2 text-primary font-bold group-hover:gap-4 transition-all">

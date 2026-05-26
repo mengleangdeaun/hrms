@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Models\Leave;
+use App\Traits\BelongsToCompany;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +12,7 @@ use App\Traits\LogsSystemActivity;
 
 class LeavePolicy extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasUlids, BelongsToCompany, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',

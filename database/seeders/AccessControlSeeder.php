@@ -18,7 +18,7 @@ class AccessControlSeeder extends Seeder
         // 1. Define Modules and Granular Permissions
         $modules = [
             'Dashboard' => [
-                'view_sales', 'view_finance', 'view_crm', 'view_attendance', 'view_workshop', 'view_inventory'
+                'view_attendance'
             ],
             'HR Management' => [
                 'view_hr', 'manage_branches', 'manage_departments', 'manage_designations', 'manage_document_types',
@@ -35,37 +35,6 @@ class AccessControlSeeder extends Seeder
             'Attendance' => [
                 'view_attendance', 'manage_working_shifts', 'manage_attendance_policies', 
                 'view_attendance_records', 'manage_attendance_records', 'manage_employee_config', 'manage_branch_qr'
-            ],
-            'Inventory' => [
-                'view_inventory', 'view_branch_products', 'view_branch_services', 'view_serials',
-                'manage_inventory_categories', 'manage_uoms', 'manage_tags', 'manage_locations',
-                'view_products', 'manage_products'
-            ],
-            'Procurement' => [
-                'view_procurement', 'manage_suppliers', 'manage_purchase_orders', 'manage_purchase_receives'
-            ],
-            'Stock Management' => [
-                'view_stock', 'view_stock_ledger', 'view_stock_balance', 'manage_stock_adjustments', 
-                'manage_stock_transfers', 'view_stock_movements', 'view_serial_movements', 'view_off_cut_serials'
-            ],
-            'Sales & CRM' => [
-                'view_sales', 'create_sales', 'manage_sales', 'access_pos', 'view_sales_orders', 'manage_sales_orders', 
-                'view_sales_invoices', 'manage_sales_invoices', 'view_quotations', 'manage_quotations', 'manage_sale_remarks',
-                'view_crm', 'manage_customer_types', 'view_customers', 'manage_customers', 
-                'manage_customer_vehicles', 'manage_contacts', 'manage_leads', 'view_service_bookings', 
-                'manage_service_bookings', 'view_customer_feedback', 'view_customer_ratings', 'manage_crm_settings'
-            ],
-            'Marketing' => [
-                'view_tma_portal', 'manage_tma_banners', 'manage_tma_broadcast', 'manage_tma_settings'
-            ],
-            'Finance' => [
-                'view_finance', 'manage_payment_accounts', 'manage_expenses', 'manage_incomes', 
-                'view_transactions', 'manage_finance_categories'
-            ],
-            'Workshop' => [
-                'view_workshop', 'view_job_cards', 'manage_job_cards', 'view_qc_reports', 
-                'manage_qc_reports', 'view_damage_reports', 'manage_damage_reports', 'manage_damage_types',
-                'manage_service_parts', 'manage_vehicle_brands', 'manage_vehicle_models'
             ],
             'Settings' => [
                 'view_settings', 'manage_setup_data', 'view_system_logs', 'manage_telegram_settings',
@@ -118,19 +87,13 @@ class AccessControlSeeder extends Seeder
                 'name' => 'Staff',
                 'description' => 'Daily operations and data entry.',
                 'permissions' => array_merge(
-                    $this->getPermissionsByPattern($permissionMap, ['view_'], ['_users', '_roles', '_settings', 'dashboard', 'finance', 'workshop', 'hr', 'leave', 'attendance', 'procurement', 'stock']),
-                    $this->getPermissionsByPattern($permissionMap, ['access_pos', 'manage_customers', 'manage_leads'])
+                    $this->getPermissionsByPattern($permissionMap, ['view_'], ['_users', '_roles', '_settings', 'dashboard', 'hr', 'leave', 'attendance'])
                 )
             ],
             'hr-manager' => [
                 'name' => 'HR Manager',
                 'description' => 'Full access to HR, Attendance, and Leave.',
-                'permissions' => $this->getPermissionsByModule($permissionMap, $modules, ['HR Management', 'Leave & Attendance'])
-            ],
-            'accountant' => [
-                'name' => 'Accountant',
-                'description' => 'Focused on Finance, Sales, and Procurement.',
-                'permissions' => $this->getPermissionsByModule($permissionMap, $modules, ['Finance', 'Procurement', 'Sales & CRM'])
+                'permissions' => $this->getPermissionsByModule($permissionMap, $modules, ['HR Management', 'Leave Management', 'Attendance'])
             ],
         ];
 

@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_settings', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->string('key')->unique();
             $table->text('value')->nullable();
             $table->string('type')->default('string'); // string, json, boolean, etc.

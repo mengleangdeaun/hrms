@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('telegram_settings', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
+            $table->ulid('company_id')->index();
             $table->text('bot_token')->nullable();
             $table->string('bot_username')->nullable();
             $table->string('global_chat_id')->nullable();     // For "All" announcements
