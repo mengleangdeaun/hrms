@@ -1,0 +1,232 @@
+export type StatusVariant = 'solid' | 'subtle';
+
+export interface StatusConfig {
+  label: string;
+  // Subtle pill (default) — tinted bg + border
+  bg: string;
+  text: string;
+  border: string;
+  dot: string;
+  // Solid pill — for high-emphasis contexts (e.g. kanban column header)
+  solidBg: string;
+  solidText: string;
+}
+
+export const STATUS_CONFIG: Record<string, StatusConfig> = {
+  // Job Card Statuses
+  'Pending': {
+    label: 'Pending',
+    bg: 'bg-amber-100 dark:bg-amber-950',
+    text: 'text-amber-800 dark:text-amber-300',
+    border: 'border-amber-400 dark:border-amber-700',
+    dot: 'bg-amber-500',
+    solidBg: 'bg-amber-500 dark:bg-amber-600',
+    solidText: 'text-white',
+  },
+  'In Progress': {
+    label: 'In Progress',
+    bg: 'bg-blue-100 dark:bg-blue-950',
+    text: 'text-blue-800 dark:text-blue-300',
+    border: 'border-blue-400 dark:border-blue-600',
+    dot: 'bg-blue-500',
+    solidBg: 'bg-blue-600 dark:bg-blue-500',
+    solidText: 'text-white',
+  },
+  'QC Review': {
+    label: 'QC Review',
+    bg: 'bg-violet-100 dark:bg-violet-950',
+    text: 'text-violet-800 dark:text-violet-300',
+    border: 'border-violet-400 dark:border-violet-600',
+    dot: 'bg-violet-500',
+    solidBg: 'bg-violet-600 dark:bg-violet-500',
+    solidText: 'text-white',
+  },
+  'Ready': {
+    label: 'Ready',
+    bg: 'bg-emerald-100 dark:bg-emerald-950',
+    text: 'text-emerald-800 dark:text-emerald-300',
+    border: 'border-emerald-400 dark:border-emerald-600',
+    dot: 'bg-emerald-500',
+    solidBg: 'bg-emerald-600 dark:bg-emerald-500',
+    solidText: 'text-white',
+  },
+  'Rework': {
+    label: 'Rework',
+    bg: 'bg-orange-100 dark:bg-orange-950',
+    text: 'text-orange-800 dark:text-orange-300',
+    border: 'border-orange-400 dark:border-orange-700',
+    dot: 'bg-orange-500',
+    solidBg: 'bg-orange-500 dark:bg-orange-600',
+    solidText: 'text-white',
+  },
+  'Delivered': {
+    label: 'Delivered',
+    bg: 'bg-zinc-100 dark:bg-zinc-800',
+    text: 'text-zinc-700 dark:text-zinc-300',
+    border: 'border-zinc-400 dark:border-zinc-600',
+    dot: 'bg-zinc-500',
+    solidBg: 'bg-zinc-600 dark:bg-zinc-500',
+    solidText: 'text-white',
+  },
+  'Cancelled': {
+    label: 'Cancelled',
+    bg: 'bg-red-100 dark:bg-red-950',
+    text: 'text-red-800 dark:text-red-300',
+    border: 'border-red-400 dark:border-red-700',
+    dot: 'bg-red-500',
+    solidBg: 'bg-red-600 dark:bg-red-500',
+    solidText: 'text-white',
+  },
+
+  // QC Statuses
+  'PASS': {
+    label: 'PASS',
+    bg: 'bg-emerald-100 dark:bg-emerald-950',
+    text: 'text-emerald-800 dark:text-emerald-300',
+    border: 'border-emerald-400 dark:border-emerald-600',
+    dot: 'bg-emerald-500',
+    solidBg: 'bg-emerald-600 dark:bg-emerald-500',
+    solidText: 'text-white',
+  },
+  'FAIL': {
+    label: 'FAIL',
+    bg: 'bg-rose-100 dark:bg-rose-950',
+    text: 'text-rose-800 dark:text-rose-300',
+    border: 'border-rose-400 dark:border-rose-700',
+    dot: 'bg-rose-500',
+    solidBg: 'bg-rose-600 dark:bg-rose-500',
+    solidText: 'text-white',
+  },
+  'CUSTOMER': {
+    label: 'Customer',
+    bg: 'bg-emerald-100 dark:bg-emerald-950',
+    text: 'text-emerald-800 dark:text-emerald-300',
+    border: 'border-emerald-400 dark:border-emerald-600',
+    dot: 'bg-emerald-500',
+    solidBg: 'bg-emerald-600 dark:bg-emerald-500',
+    solidText: 'text-white',
+  },
+  'LEAD': {
+    label: 'Lead',
+    bg: 'bg-blue-100 dark:bg-blue-950',
+    text: 'text-blue-800 dark:text-blue-300',
+    border: 'border-blue-400 dark:border-blue-600',
+    dot: 'bg-blue-500',
+    solidBg: 'bg-blue-600 dark:bg-blue-500',
+    solidText: 'text-white',
+  },
+  'ORGANIZATION': {
+    label: 'Organization',
+    bg: 'bg-indigo-100 dark:bg-indigo-950',
+    text: 'text-indigo-800 dark:text-indigo-300',
+    border: 'border-indigo-400 dark:border-indigo-600',
+    dot: 'bg-indigo-500',
+    solidBg: 'bg-indigo-600 dark:bg-indigo-500',
+    solidText: 'text-white',
+  },
+
+  // Item / Task Statuses
+  'Completed': {
+    label: 'Completed',
+    bg: 'bg-emerald-100 dark:bg-emerald-950',
+    text: 'text-emerald-800 dark:text-emerald-300',
+    border: 'border-emerald-400 dark:border-emerald-600',
+    dot: 'bg-emerald-400',
+    solidBg: 'bg-emerald-500 dark:bg-emerald-500',
+    solidText: 'text-white',
+  },
+  'On Hold': {
+    label: 'On Hold',
+    bg: 'bg-amber-100 dark:bg-amber-950',
+    text: 'text-amber-800 dark:text-amber-300',
+    border: 'border-amber-400 dark:border-amber-700',
+    dot: 'bg-amber-500',
+    solidBg: 'bg-amber-500 dark:bg-amber-600',
+    solidText: 'text-white',
+  },
+  'Assigned': {
+    label: 'Assigned',
+    bg: 'bg-cyan-100 dark:bg-cyan-950',
+    text: 'text-cyan-800 dark:text-cyan-300',
+    border: 'border-cyan-400 dark:border-cyan-700',
+    dot: 'bg-cyan-500',
+    solidBg: 'bg-cyan-500 dark:bg-cyan-600',
+    solidText: 'text-white',
+  },
+  'Reworking': {
+    label: 'Reworking',
+    bg: 'bg-orange-100 dark:bg-orange-950',
+    text: 'text-orange-800 dark:text-orange-300',
+    border: 'border-orange-400 dark:border-orange-700',
+    dot: 'bg-orange-500',
+    solidBg: 'bg-orange-500 dark:bg-orange-600',
+    solidText: 'text-white',
+  },
+  'Default': {
+    label: 'Unknown',
+    bg: 'bg-zinc-100 dark:bg-zinc-800',
+    text: 'text-zinc-600 dark:text-zinc-400',
+    border: 'border-zinc-300 dark:border-zinc-600',
+    dot: 'bg-zinc-400',
+    solidBg: 'bg-zinc-500',
+    solidText: 'text-white',
+  },
+};
+
+// Helper to normalize status strings to match STATUS_CONFIG keys
+const normalizeStatus = (status: string): string => {
+  if (!status) return 'Default';
+  const s = status.toLowerCase().trim();
+  
+  // Direct mapping for special cases with spaces or acronyms
+  const specialMap: Record<string, string> = {
+    'in progress': 'In Progress',
+    'inprogress': 'In Progress',
+    'qc review': 'QC Review',
+    'qcreview': 'QC Review',
+    'on hold': 'On Hold',
+    'onhold': 'On Hold'
+  };
+
+  const directMap: Record<string, string> = {
+    'customer': 'CUSTOMER',
+    'lead': 'LEAD',
+    'organization': 'ORGANIZATION',
+    'converted': 'CUSTOMER',
+    'active': 'LEAD'
+  };
+
+  if (specialMap[s]) return specialMap[s];
+  if (directMap[s]) return directMap[s];
+
+  // For others, try to match the case-insensitive key
+  const keys = Object.keys(STATUS_CONFIG);
+  const found = keys.find(k => k.toLowerCase() === s);
+  
+  return found || 'Default';
+};
+
+export const getStatusConfig = (status: string): StatusConfig => {
+  const normalized = normalizeStatus(status);
+  return STATUS_CONFIG[normalized] ?? STATUS_CONFIG['Default'];
+};
+
+export const JOB_CARD_STATUS_KEYS = [
+  'Pending',
+  'In Progress',
+  'QC Review',
+  'Rework',
+  'Ready',
+  'Delivered',
+  'Cancelled'
+];
+
+export const ITEM_STATUS_KEYS = [
+  'Pending',
+  'Assigned',
+  'In Progress',
+  'Completed',
+  'On Hold',
+  'Cancelled',
+  'Reworking'
+];
